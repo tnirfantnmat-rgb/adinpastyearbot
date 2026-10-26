@@ -1,0 +1,1062 @@
+const EXAMS = ["mid1", "final1", "mid2", "final2"];
+const YEARS = ["2223", "2324", "2425", "2526"];
+const SUBJECTS = [
+  "chem",
+  "bio",
+  "physics",
+  "math",
+  "advmath",
+  "programming"
+];
+
+const SUBJECT_LABELS = {
+  chem: "🧪 Chemistry",
+  bio: "🧬 Biology",
+  physics: "⚛️ Physics",
+  math: "📐 Mathematics",
+  advmath: "📊 Advanced Maths",
+  programming: "💻 Programming"
+};
+
+// Emergency fallback for old Chemistry papers
+const HARDCODED_PAPERS = {
+  "py_mid1_2526_chem":
+    "BQACAgUAAyEFAAMBAAEkAx8AAwtqhcxA9LE1avDmMAp6fCN-_fT9HwACpR8AAh7VMVT14JD4Ts-zzj0E",
+
+  "py_mid1_2425_chem":
+    "BQACAgUAAyEFAAMBAAEkAx8AAxFqhc8-Lxt0nIPZolLtXCLlROI7hQACrh8AAh7VMVQda_2jIRiBWD0E",
+
+  "py_mid1_2324_chem":
+    "BQACAgUAAyEFAAMBAAEkAx8AAw9qhc87bjzcGxZgqz48UC0behh93wACrR8AAh7VMVTayos2vIOQ7j0E",
+
+  "py_mid1_2223_chem":
+    "BQACAgUAAyEFAAMBAAEkAx8AAw1qhc843sWgAAFaq3Ea8kkga3DVrekAAqwfAAIe1TFUO8nHeF8D9DU9BA",
+
+  "py_final1_2526_chem":
+    "BQACAgUAAyEFAAMBAAEkAx8AAxNqhc-9ksSMDWnW7LLc3aPPpsLpoAACrx8AAh7VMVSallfLbwrafj0E",
+
+  "py_final1_2425_chem":
+    "BQACAgUAAyEFAAMBAAEkAx8AAxVqhc_Bn9wtVTMaqfToHYkvrU6zRAACsB8AAh7VMVSfmoTRC643LD0E",
+
+  "py_final1_2324_chem":
+    "BQACAgUAAyEFAAMBAAEkAx8AAxdqhc_GFEbJl-OsUUrmdASWkroUawACsR8AAh7VMVTfb0DxfYTsIz0E",
+
+  "py_final1_2223_chem":
+    "BQACAgUAAyEFAAMBAAEkAx8AAxlqhc_Wv8apiNW_U8ffQFWkM7nMyQACsh8AAh7VMVRdbQnjqjlgJD0E"
+};
+  const IMPORT_PAPERS = {
+  "ans_mid1_2223_chem": "[\"BQACAgUAAyEFAAMBAAEkAx8AA45qpknTTui2N3k22pPCwGJp2PneNAACICUAApACMFUXd_WvayG4Wz0E\"]",
+  "ans_mid1_2223_math": "[\"BQACAgUAAyEFAAMBAAEkAx8AA3tqpkbfzrvFr3cEmJi_RpmghVFXkQACFCUAApACMFXIlQyNxFzoMj0E\"]",
+  "ans_mid1_2223_physics": "[\"BQACAgUAAyEFAAMBAAEkAx8AA5dqplDU30o8YHLKTu24Wy2-EGOdfQACMSUAApACMFXUoMhrL5Lhgz0E\"]",
+
+  "ans_mid1_2324_chem": "[\"BQACAgUAAyEFAAMBAAEkAx8AA4ZqpkjOax_qtDDualwPZO6Q9sbbrwACHSUAApACMFUW1AIsHCTBXD0E\"]",
+  "ans_mid1_2324_math": "[\"BQACAgUAAyEFAAMBAAEkAx8AA3lqpkWm5tlrsaHuJZiQOdLK0zNyGAACDyUAApACMFVQsl5hBEOU0D0E\"]",
+  "ans_mid1_2324_physics": "[\"BQACAgUAAyEFAAMBAAEkAx8AA5VqpksfeWvr2fF4YzWYcBYi-UhLDwACIiUAApACMFXSQbVykaIK4z0E\"]",
+
+  "ans_mid1_2425_chem": "[\"BQACAgUAAyEFAAMBAAEkAx8AA1Vqn8ubNElNHs8Bf9yRrPpMZe4U8wACdB8AAk8YAAFVbCueiU8aVEU9BA\"]",
+  "ans_mid1_2425_math": "[\"BQACAgUAAyEFAAMBAAEkAx8AA31qpkcLTjPEE3xOTMuxMbwQuJgtggACFSUAApACMFUCnLSjW9FuOj0E\"]",
+  "ans_mid1_2425_physics": "[\"BQACAgUAAyEFAAMBAAEkAx8AA4FqpkgEFgWANdtk7QvLaf3GRm_SzAACGiUAApACMFUVHDP_SMG9bz0E\"]",
+
+  "ans_mid1_2526_chem": "[\"BQACAgUAAyEFAAMBAAEkAx8AA4pqpklMQPFIoy9UMOeunOm6nLfZbAACHiUAApACMFVJEYx46M-y0T0E\"]",
+  "ans_mid1_2526_math": "[\"BQACAgUAAyEFAAMBAAEkAx8AA39qpkckbX5kBnkFkGnIOpCiJGOPsQACFiUAApACMFXGcETqOj1tOz0E\"]",
+  "ans_mid1_2526_physics": "[\"BQACAgUAAyEFAAMBAAEkAx8AA1xqn8xdQHyjWEmWwvtIWrFS6QEongACeB8AAk8YAAFV_sY8vl0YG_g9BA\"]",
+
+  "py_final1_2223_advmath": "[\"BQACAgUAAyEFAAMBAAEkAx8AAz1qhpmcxtzlvU5re7KVdA-Oi708RwAC2SEAAh7VMVT0l6EVCou4Gj0E\"]",
+  "py_final1_2223_bio": "[\"BQACAgUAAyEFAAMBAAEkAx8AAzdqhpcoWvqcOJRyKXdDxv6o3s6dugACvSEAAh7VMVQW_JRrliIOij0E\",\"BQACAgUAAyEFAAMBAAEkAx8AAzlqhpdMP2PJt36oj0nIktWDDTdE6QACwSEAAh7VMVS-H9UJnkKpyj0E\"]",
+  "py_final1_2223_chem": "BQACAgUAAyEFAAMBAAEkAx8AAzNqhpJUnkmGsrLu_NAZUjezYYzY5gACfCEAAh7VMVT6OpnkHSVY7T0E",
+  "py_final1_2223_math": "BQACAgUAAyEFAAMBAAEkAx8AAzVqhpMaEzNVaIqr3SjFZETk12IgpgAChyEAAh7VMVQjviLTyBOqJj0E",
+  "py_final1_2223_programming": "[\"BQACAgUAAyEFAAMBAAEkAx8AAztqhpfuxusKrO0SvGITMJBt8pbZeQAC0SEAAh7VMVQxeYOc4YOG7j0E\"]",
+
+  "py_mid1_2223_chem": "BQACAgUAAyEFAAMBAAEkAx8AAylqhpDGP3aW0JWLdTuFmd0-FM6LJwACZiEAAh7VMVTtG1JU_8zY3j0E",
+  "py_mid1_2223_math": "[\"BQACAgUAAyEFAAMBAAEkAx8AAytqhpDuJVJKn1wqCv7emtTq3McOVgACZyEAAh7VMVQGFdGgJ1CfLD0E\",\"BQACAgUAAyEFAAMBAAEkAx8AA09qnub3m45VSAzOijPZCiGf8p-JuwACLCEAAuKJ8VRivrvDCPlDKz0E\"]",
+  "py_mid1_2223_physics": "[\"BQACAgUAAyEFAAMBAAEkAx8AA0NqnuZS6u7tpbDuDRQVBy1-ozFScQACHyEAAuKJ8VTlWKHD1AP-_z0E\"]",
+  "py_mid1_2223_programming": "BQACAgUAAyEFAAMBAAEkAx8AAy9qhpF86rhl3htQ1muSkmtN8JlOsgACcSEAAh7VMVQHP0wChdrcUT0E",
+
+  "py_mid1_2324_math": "[\"BQACAgUAAyEFAAMBAAEkAx8AA1FqnucdErtmg8izXhwQYtD8KXSWnwACLSEAAuKJ8VQrkPNkdeTwWz0E\"]",
+  "py_mid1_2324_physics": "[\"BQACAgUAAyEFAAMBAAEkAx8AA5Nqpkp44ASXqnt5f3Em2qdiKXJ_1QACISUAApACMFVDGjmYDS5emz0E\"]",
+
+  "py_mid1_2425_math": "[\"BQACAgUAAyEFAAMBAAEkAx8AAx9qhm0FtPdlUUF6cri09YzmYmbpRQACtiAAAh7VMVQ3HS1uwzSTnT0E\",\"BQACAgUAAyEFAAMBAAEkAx8AA01qnubRvEv7-ZPY19L9LUV0mNunBQACKCEAAuKJ8VR5LDnt412Hqz0E\"]",
+  "py_mid1_2425_physics": "[\"BQACAgUAAyEFAAMBAAEkAx8AA0dqnuZvqzxXIy9HYDPWbaML0YzkuQACIiEAAuKJ8VRDyG-1kNsm4T0E\"]",
+
+  "py_mid1_2526_math": "[\"BQACAgUAAyEFAAMBAAEkAx8AA0tqnubE5kHzHqtduHWdSHIkaqr1uAACJyEAAuKJ8VTZfCE8WxRYhT0E\"]",
+  "py_mid1_2526_physics": "[\"BQACAgUAAyEFAAMBAAEkAx8AAz9qhraBA0CDW87Tv1J5JFFu5TEeUgAC9R4AAh7VOVROkblSpyQEvj0E\"]"
+};
+
+export default {
+  async fetch(request, env) {
+   const url = new URL(request.url);
+
+// TEMPORARY WEBHOOK SETUP
+if (
+  request.method === "GET" &&
+  url.pathname === "/setup-webhook"
+) {
+  const webhookUrl = url.origin + "/";
+
+  const result = await telegram(
+    env.BOT_TOKEN,
+    "setWebhook",
+    {
+      url: webhookUrl,
+      drop_pending_updates: true
+    }
+  );
+
+  return new Response(
+    JSON.stringify(result, null, 2),
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+}
+// TEMPORARY PAPER IMPORT
+if (
+  request.method === "GET" &&
+  url.pathname === "/import-papers"
+) {
+  let imported = 0;
+
+  for (const [key, value] of Object.entries(IMPORT_PAPERS)) {
+    await env.PAPER_FILES.put(key, value);
+    imported++;
+  }
+
+  return new Response(
+    `✅ Imported ${imported} paper entries into PAPER_FILES KV.`
+  );
+}
+if (request.method !== "POST") {
+  return new Response(
+    "EduSphere Past Year Bot is running"
+  );
+}
+
+    try {
+      const update = await request.json();
+
+      // ========================================
+      // PDF UPLOAD FROM STORAGE CHANNEL
+      // ========================================
+      const uploadMsg = update.message || update.channel_post;
+
+      if (uploadMsg?.document) {
+        await handleDocumentUpload(uploadMsg, update, env);
+        return new Response("OK");
+      }
+
+      // ========================================
+      // TEXT COMMAND
+      // ========================================
+      if (update.message?.text) {
+        const message = update.message;
+
+        if (message.chat.type !== "private") {
+          return new Response("OK");
+        }
+
+        await handleTextMessage(message, env);
+        return new Response("OK");
+      }
+
+      // ========================================
+      // BUTTON
+      // ========================================
+      if (update.callback_query) {
+        await handleCallback(update.callback_query, env);
+        return new Response("OK");
+      }
+
+      return new Response("OK");
+    } catch (error) {
+      console.log("ERROR:", error);
+      return new Response("OK");
+    }
+  }
+};
+
+
+// =====================================================
+// TEXT COMMANDS
+// =====================================================
+
+async function handleTextMessage(message, env) {
+  const chatId = message.chat.id;
+  const userId = String(message.from.id);
+  const text = message.text.trim();
+  const lower = text.toLowerCase();
+
+  if (lower === "/start") {
+    await showMainMenu(chatId, env);
+    return;
+  }
+
+  if (lower === "/id") {
+    await sendMessage(
+      env.BOT_TOKEN,
+      chatId,
+      "Your Telegram ID: " + userId
+    );
+    return;
+  }
+
+  if (lower === "/admin") {
+    if (userId !== String(env.ADMIN_ID)) {
+      await sendMessage(
+        env.BOT_TOKEN,
+        chatId,
+        "⛔ Admin only."
+      );
+      return;
+    }
+
+    await sendMessage(
+      env.BOT_TOKEN,
+      chatId,
+      "⚙️ Admin Commands\n\n" +
+      "Upload PDF in storage channel:\n" +
+      "/add mid1 2526 chem\n\n" +
+      "Answer scheme:\n" +
+      "/add mid1 2526 chem answer\n\n" +
+      "Remove question paper:\n" +
+      "/remove mid1 2526 chem\n\n" +
+      "Remove answer scheme:\n" +
+      "/remove mid1 2526 chem answer"
+    );
+
+    return;
+  }
+
+  if (lower.startsWith("/remove ")) {
+    if (userId !== String(env.ADMIN_ID)) {
+      await sendMessage(
+        env.BOT_TOKEN,
+        chatId,
+        "⛔ Admin only."
+      );
+      return;
+    }
+
+    const parts = lower.split(/\s+/);
+
+    if (parts.length !== 4 && parts.length !== 5) {
+      await sendMessage(
+        env.BOT_TOKEN,
+        chatId,
+        "❌ Format:\n" +
+        "/remove mid1 2526 chem\n" +
+        "/remove mid1 2526 chem answer"
+      );
+      return;
+    }
+
+    const exam = parts[1];
+    const year = parts[2];
+    const subject = parts[3];
+    const fileType = parts[4] || "question";
+
+    if (!isValidPaper(exam, year, subject)) {
+      await sendMessage(
+        env.BOT_TOKEN,
+        chatId,
+        "❌ Invalid exam, year or subject."
+      );
+      return;
+    }
+
+    const key =
+      fileType === "answer"
+        ? `ans_${exam}_${year}_${subject}`
+        : `py_${exam}_${year}_${subject}`;
+
+    const existing = await env.PAPER_FILES.get(key);
+
+    if (!existing) {
+      await sendMessage(
+        env.BOT_TOKEN,
+        chatId,
+        "❌ Stored paper not found:\n" + key
+      );
+      return;
+    }
+
+    await env.PAPER_FILES.delete(key);
+
+    await sendMessage(
+      env.BOT_TOKEN,
+      chatId,
+      "🗑 Removed:\n" + key
+    );
+
+    return;
+  }
+}
+
+
+// =====================================================
+// STORAGE CHANNEL UPLOAD
+// =====================================================
+
+async function handleDocumentUpload(message, update, env) {
+  // Only channel_post uploads must come from storage channel
+  if (
+    update.channel_post &&
+    String(message.chat.id) !== String(env.STORAGE_CHANNEL_ID)
+  ) {
+    return;
+  }
+
+  const fileId = message.document.file_id;
+  const fileName = message.document.file_name || "PDF";
+  const caption = message.caption || "";
+  const chatId = message.chat.id;
+
+  if (!caption.toLowerCase().startsWith("/add ")) {
+    await sendMessage(
+      env.BOT_TOKEN,
+      chatId,
+      "FILE NAME: " + fileName +
+      "\n\nFILE ID:\n" + fileId
+    );
+
+    return;
+  }
+
+  const parts = caption.trim().toLowerCase().split(/\s+/);
+
+  if (parts.length !== 4 && parts.length !== 5) {
+    await sendMessage(
+      env.BOT_TOKEN,
+      chatId,
+      "❌ Format:\n" +
+      "/add mid1 2526 chem\n" +
+      "/add mid1 2526 chem answer"
+    );
+
+    return;
+  }
+
+  const exam = parts[1];
+  const year = parts[2];
+  const subject = parts[3];
+  const fileType = parts[4] || "question";
+
+  if (!isValidPaper(exam, year, subject)) {
+    await sendMessage(
+      env.BOT_TOKEN,
+      chatId,
+      "❌ Invalid exam, year or subject."
+    );
+    return;
+  }
+
+  if (
+    fileType !== "question" &&
+    fileType !== "answer"
+  ) {
+    await sendMessage(
+      env.BOT_TOKEN,
+      chatId,
+      "❌ Last word must be 'answer' or omitted."
+    );
+    return;
+  }
+
+  const key =
+    fileType === "answer"
+      ? `ans_${exam}_${year}_${subject}`
+      : `py_${exam}_${year}_${subject}`;
+
+  const existing = await env.PAPER_FILES.get(key);
+
+  let fileIds = [];
+
+  if (existing) {
+    try {
+      fileIds = JSON.parse(existing);
+      if (!Array.isArray(fileIds)) {
+        fileIds = [existing];
+      }
+    } catch {
+      fileIds = [existing];
+    }
+  }
+
+  if (!fileIds.includes(fileId)) {
+    fileIds.push(fileId);
+  }
+
+  await env.PAPER_FILES.put(
+    key,
+    JSON.stringify(fileIds)
+  );
+
+  await sendMessage(
+    env.BOT_TOKEN,
+    chatId,
+    "✅ Paper registered!\n\n" +
+    key + "\n" +
+    fileName
+  );
+}
+
+
+// =====================================================
+// BUTTON HANDLER
+// =====================================================
+
+async function handleCallback(callback, env) {
+  const choice = callback.data;
+  const chatId = callback.message.chat.id;
+  const messageId = callback.message.message_id;
+
+  await answerCallback(env.BOT_TOKEN, callback.id);
+
+  // Return to main menu
+  if (choice === "main") {
+    await editMenu(
+      env.BOT_TOKEN,
+      chatId,
+      messageId,
+      "🏠 EduSphere — Choose an option:",
+      mainKeyboard()
+    );
+    return;
+  }
+
+  // Features under maintenance
+  if (["notes", "daily_quiz", "leaderboard"].includes(choice)) {
+    await editMenu(
+      env.BOT_TOKEN,
+      chatId,
+      messageId,
+      "🛠 This feature is currently under maintenance.",
+      [[{ text: "🏠 Home", callback_data: "main" }]]
+    );
+    return;
+  }
+
+  // Past Year Papers -> Select Semester
+  if (choice === "pastyear") {
+    await showSemesterMenu(env.BOT_TOKEN, chatId, messageId);
+    return;
+  }
+
+  // Select Semester -> Choose Subject
+  if (choice === "semester1" || choice === "semester2") {
+    await showSubjectMenu(
+      env.BOT_TOKEN,
+      chatId,
+      messageId,
+      choice
+    );
+    return;
+  }
+
+  // Choose Subject -> Choose Paper
+  if (choice.startsWith("subject_")) {
+    const [, semester, subject] = choice.split("_");
+
+    await showPaperMenu(
+      env.BOT_TOKEN,
+      chatId,
+      messageId,
+      semester,
+      subject
+    );
+    return;
+  }
+
+  // Return to paper selection
+  if (choice.startsWith("papermenu_")) {
+    const [, semester, subject] = choice.split("_");
+
+    await showPaperMenu(
+      env.BOT_TOKEN,
+      chatId,
+      messageId,
+      semester,
+      subject
+    );
+    return;
+  }
+
+  // Choose Paper -> Select Session
+  if (choice.startsWith("paper_")) {
+    const [, semester, subject, exam] = choice.split("_");
+
+    await showYearMenu(
+      env.BOT_TOKEN,
+      chatId,
+      messageId,
+      semester,
+      subject,
+      exam
+    );
+    return;
+  }
+
+  // Return to session selection
+  if (choice.startsWith("sessionmenu_")) {
+    const [, semester, subject, exam] = choice.split("_");
+
+    await showYearMenu(
+      env.BOT_TOKEN,
+      chatId,
+      messageId,
+      semester,
+      subject,
+      exam
+    );
+    return;
+  }
+
+  // Select Session -> Question Paper / Answer Scheme
+  if (choice.startsWith("session_")) {
+    const [, semester, subject, exam, year] = choice.split("_");
+    const paperKey = `py_${exam}_${year}_${subject}`;
+
+    await showFileMenu(
+      env.BOT_TOKEN,
+      chatId,
+      messageId,
+      paperKey,
+      semester,
+      subject,
+      exam
+    );
+    return;
+  }
+
+  // Send Question Paper
+  if (choice.startsWith("question_")) {
+    const key = choice.replace("question_", "");
+    const success = await sendStoredPaper(
+      env,
+      chatId,
+      key,
+      "question"
+    );
+
+    if (!success) {
+      await editMenu(
+        env.BOT_TOKEN,
+        chatId,
+        messageId,
+        "📂 Question Paper Not Available Yet",
+        [
+          [{ text: "⬅️ Back", callback_data: `fileback_${key}` }],
+          [{ text: "🏠 Home", callback_data: "main" }]
+        ]
+      );
+    }
+    return;
+  }
+
+  // Send Answer Scheme
+  if (choice.startsWith("answer_")) {
+    const paperKey = choice.replace("answer_", "");
+    const parts = paperKey.split("_");
+    const answerKey = `ans_${parts[1]}_${parts[2]}_${parts[3]}`;
+
+    const success = await sendStoredPaper(
+      env,
+      chatId,
+      answerKey,
+      "answer"
+    );
+
+    if (!success) {
+      await editMenu(
+        env.BOT_TOKEN,
+        chatId,
+        messageId,
+        "📂 Answer Scheme Not Available Yet",
+        [
+          [
+            {
+              text: "⬅️ Back",
+              callback_data: `fileback_${paperKey}`
+            }
+          ],
+          [{ text: "🏠 Home", callback_data: "main" }]
+        ]
+      );
+    }
+    return;
+  }
+
+  // Return from unavailable-file message
+  if (choice.startsWith("fileback_")) {
+    const key = choice.replace("fileback_", "");
+    const parts = key.split("_");
+
+    const exam = parts[1];
+    const year = parts[2];
+    const subject = parts[3];
+    const semester =
+      exam === "mid1" || exam === "final1" ? "s1" : "s2";
+
+    await showFileMenu(
+      env.BOT_TOKEN,
+      chatId,
+      messageId,
+      key,
+      semester,
+      subject,
+      exam
+    );
+  }
+}
+
+
+// =====================================================
+// MENUS
+// =====================================================
+
+ // =====================================================
+// MENUS — PASUM INTERFACE
+// =====================================================
+
+// Select Semester
+async function showSemesterMenu(token, chatId, messageId) {
+  await editMenu(
+    token,
+    chatId,
+    messageId,
+    "📚 Select semester:",
+    [
+      [{ text: "Semester 1", callback_data: "semester1" }],
+      [{ text: "Semester 2", callback_data: "semester2" }],
+      [{ text: "⬅️ Back", callback_data: "main" }]
+    ]
+  );
+}
+
+// Choose Subject
+async function showSubjectMenu(
+  token,
+  chatId,
+  messageId,
+  semester
+) {
+  const semesterCode =
+    semester === "semester1" ? "s1" : "s2";
+
+  const keyboard = SUBJECTS.map(subject => [
+    {
+      text: SUBJECT_LABELS[subject],
+      callback_data: `subject_${semesterCode}_${subject}`
+    }
+  ]);
+
+  keyboard.push([
+    {
+      text: "⬅️ Back",
+      callback_data: "pastyear"
+    }
+  ]);
+
+  await editMenu(
+    token,
+    chatId,
+    messageId,
+    `📘 ${
+      semester === "semester1"
+        ? "Semester 1"
+        : "Semester 2"
+    } — Choose subject:`,
+    keyboard
+  );
+}
+
+// Choose Paper
+async function showPaperMenu(
+  token,
+  chatId,
+  messageId,
+  semester,
+  subject
+) {
+  const options = {
+    s1: {
+      bio: [
+        ["Biology I", "mid1"],
+        ["Biology II", "final1"]
+      ],
+      math: [
+        ["Math I", "final1"]
+      ],
+      chem: [
+        ["Mid Sem", "mid1"],
+        ["Final", "final1"]
+      ],
+      physics: [
+        ["Mid Sem", "mid1"],
+        ["Final", "final1"]
+      ],
+      advmath: [
+        ["Final", "final1"]
+      ],
+      programming: [
+        ["Final", "final1"]
+      ]
+    },
+
+    s2: {
+      bio: [
+        ["Biology III", "mid2"],
+        ["Biology IV", "final2"]
+      ],
+      math: [
+        ["Math III", "mid2"],
+        ["Math II", "final2"]
+      ],
+      chem: [
+        ["Mid Sem", "mid2"],
+        ["Final", "final2"]
+      ],
+      physics: [
+        ["Mid Sem", "mid2"],
+        ["Final", "final2"]
+      ],
+      advmath: [
+        ["Final", "final2"]
+      ],
+      programming: [
+        ["Final", "final2"]
+      ]
+    }
+  };
+
+  const papers =
+    (options[semester] && options[semester][subject]) || [];
+
+  const keyboard = papers.map(([label, exam]) => [
+    {
+      text: label,
+      callback_data: `paper_${semester}_${subject}_${exam}`
+    }
+  ]);
+
+  keyboard.push([
+    {
+      text: "⬅️ Back",
+      callback_data:
+        semester === "s1" ? "semester1" : "semester2"
+    }
+  ]);
+
+  keyboard.push([
+    {
+      text: "🏠 Home",
+      callback_data: "main"
+    }
+  ]);
+
+  await editMenu(
+    token,
+    chatId,
+    messageId,
+    "📄 Choose paper:",
+    keyboard
+  );
+}
+
+// Select Session
+async function showYearMenu(
+  token,
+  chatId,
+  messageId,
+  semester,
+  subject,
+  exam
+) {
+  const yearLabels = {
+    "2223": "2022/2023",
+    "2324": "2023/2024",
+    "2425": "2024/2025",
+    "2526": "2025/2026"
+  };
+
+  const keyboard = YEARS.map(year => [
+    {
+      text: yearLabels[year],
+      callback_data:
+        `session_${semester}_${subject}_${exam}_${year}`
+    }
+  ]);
+
+  keyboard.push([
+    {
+      text: "⬅️ Back",
+      callback_data: `papermenu_${semester}_${subject}`
+    }
+  ]);
+
+  await editMenu(
+    token,
+    chatId,
+    messageId,
+    "🗓 Select session:",
+    keyboard
+  );
+}
+
+// Question Paper / Answer Scheme
+async function showFileMenu(
+  token,
+  chatId,
+  messageId,
+  paperKey,
+  semester,
+  subject,
+  exam
+) {
+  await editMenu(
+    token,
+    chatId,
+    messageId,
+    "📂 Choose file:",
+    [
+      [
+        {
+          text: "📄 Question Paper",
+          callback_data: `question_${paperKey}`
+        }
+      ],
+      [
+        {
+          text: "✅ Answer Scheme",
+          callback_data: `answer_${paperKey}`
+        }
+      ],
+      [
+        {
+          text: "⬅️ Back",
+          callback_data:
+            `sessionmenu_${semester}_${subject}_${exam}`
+        }
+      ],
+      [
+        {
+          text: "🏠 Home",
+          callback_data: "main"
+        }
+      ]
+    ]
+  );
+}
+
+
+// =====================================================
+// PAPER RETRIEVAL
+// =====================================================
+
+async function sendStoredPaper(
+  env,
+  chatId,
+  key,
+  type
+) {
+  let fileIds = [];
+
+  // KV first
+  const saved = await env.PAPER_FILES.get(key);
+
+  if (saved) {
+    try {
+      fileIds = JSON.parse(saved);
+
+      if (!Array.isArray(fileIds)) {
+        fileIds = [saved];
+      }
+    } catch {
+      fileIds = [saved];
+    }
+  }
+
+  // Emergency old Chemistry fallback
+  if (
+    fileIds.length === 0 &&
+    type === "question" &&
+    HARDCODED_PAPERS[key]
+  ) {
+    fileIds = [HARDCODED_PAPERS[key]];
+  }
+
+  if (fileIds.length === 0) {
+    return false;
+  }
+
+  let sent = false;
+
+  for (const fileId of fileIds) {
+    const result = await sendDocument(
+      env.BOT_TOKEN,
+      chatId,
+      fileId
+    );
+
+    if (result) {
+      sent = true;
+    }
+  }
+
+  return sent;
+}
+
+
+// =====================================================
+// TELEGRAM HELPERS
+// =====================================================
+
+function footer(text) {
+  return (
+    text +
+    "\n\n⚠️ Disclaimer:\n" +
+    "• Only Mid Sem 1 Past Year Papers & Answer Schemes are fully uploaded for now.\n" +
+    "• Other Past Year sections are still incomplete.\n" +
+    "• 📚 Notes and 🧠 Daily Quiz are currently under maintenance.\n\n" +
+    "Any problems or missing files?\n" +
+    "text me on my tele: @tuanirfan"
+  );
+}
+
+async function telegram(
+  token,
+  method,
+  payload
+) {
+  const response = await fetch(
+    `https://api.telegram.org/bot${token}/${method}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+
+  const result = await response.json();
+
+  if (!result.ok) {
+    console.log(
+      "Telegram error:",
+      method,
+      result
+    );
+  }
+
+  return result;
+}
+
+async function sendMessage(
+  token,
+  chatId,
+  text
+) {
+  const result = await telegram(
+    token,
+    "sendMessage",
+    {
+      chat_id: chatId,
+      text
+    }
+  );
+
+  return result.ok === true;
+}
+
+async function sendMenu(
+  token,
+  chatId,
+  text,
+  keyboard
+) {
+  const result = await telegram(
+    token,
+    "sendMessage",
+    {
+      chat_id: chatId,
+      text: footer(text),
+      reply_markup: {
+        inline_keyboard: keyboard
+      }
+    }
+  );
+
+  return result.ok === true;
+}
+
+async function editMenu(
+  token,
+  chatId,
+  messageId,
+  text,
+  keyboard
+) {
+  const result = await telegram(
+    token,
+    "editMessageText",
+    {
+      chat_id: chatId,
+      message_id: messageId,
+      text: footer(text),
+      reply_markup: {
+        inline_keyboard: keyboard
+      }
+    }
+  );
+
+  return result.ok === true;
+}
+
+async function sendDocument(
+  token,
+  chatId,
+  fileId
+) {
+  const result = await telegram(
+    token,
+    "sendDocument",
+    {
+      chat_id: chatId,
+      document: fileId
+    }
+  );
+
+  return result.ok === true;
+}
+
+async function answerCallback(
+  token,
+  callbackId
+) {
+  await telegram(
+    token,
+    "answerCallbackQuery",
+    {
+      callback_query_id: callbackId
+    }
+  );
+}
+
+
+// =====================================================
+// VALIDATION
+// =====================================================
+
+function isValidPaper(
+  exam,
+  year,
+  subject
+) {
+  return (
+    EXAMS.includes(exam) &&
+    YEARS.includes(year) &&
+    SUBJECTS.includes(subject)
+  );
+}
